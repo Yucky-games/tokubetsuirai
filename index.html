@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>特別依頼キメルくん</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  padding: 20px;
+  margin: 0;
+}
+header {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+.madeby {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+}
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.group {
+  border: 2px solid #ccc;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.item {
+  width: 100%;
+  text-align: center;
+}
+.label-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.label-wrap img {
+  height: 24px;
+}
+.item input {
+  width: 50%;
+  padding: 6px;
+  font-size: 16px;
+}
+.button-area {
+  text-align: center;
+  margin-bottom: 16px;
+}
+button {
+  display: inline-block;
+  padding: 10px 18px;
+  font-size: 18px;
+  background-color: #1e88e5;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #1565c0;
+}
+#result {
+  margin-top: 16px;
+  font-size: 17px;
+}
+#result .main-message {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+details {
+  margin-top: 20px;
+  border: 1px solid #aaa;
+  padding: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="madeby">
+  <a href="https://x.com/yucky_games" target="_blank">made by ゆっきー</a>
+</div>
+
+<header>特別依頼キメルくん</header>
+
+<div class="container">
+
+  <div class="group">
+    <div class="grid">
+      <div class="item">
+        <div class="label-wrap">
+          <span>初級レポート</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E5889DE7B49AE383ACE3839DE383BCE383882E706E67.png">
+        </div>
+        <input type="number" id="A" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>中級レポート</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E4B8ADE7B49AE383ACE3839DE383BCE383882E706E67.png">
+        </div>
+        <input type="number" id="B" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>上級レポート</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E4B88AE7B49AE383ACE3839DE383BCE383882E706E67.png">
+        </div>
+        <input type="number" id="C" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>最上級レポート</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E69C80E4B88AE7B49AE383ACE3839DE383BCE383882E706E67.png">
+        </div>
+        <input type="number" id="D" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="item">
+      <div class="label-wrap">
+        <span>クレジット</span>
+      </div>
+      <input type="number" id="E" value="0">
+    </div>
+  </div>
+
+  <div class="button-area">
+    <button onclick="calculate()">計算する</button>
+  </div>
+
+  <div id="result"></div>
+
+  <details>
+    <summary>判断基準はこちら</summary>
+    <p>
+    １名分の育成に必要なレポートは、レベル１からレベル90まで育成したときに必要な経験値から算出しています。
+    １名分の育成に必要なクレジットは、レベル１からレベル90まで育成、スキルすべてMAX、装備10,10,10、
+    にするために必要なクレジットを元にしています。
+    星上げに必要なクレジットは考慮してないですが、スキルや装備を全てフルマックスにするケースが少ないと思うので、
+    全くの的はずれな値ではないと思います。
+    </p>
+  </details>
+
+</div>
+
+<script>
+function round1(x) {
+  return Math.round(x * 10) / 10;
+}
+
+function calculate() {
+  const A = Number(document.getElementById("A").value) || 0;
+  const B = Number(document.getElementById("B").value) || 0;
+  const C = Number(document.getElementById("C").value) || 0;
+  const D = Number(document.getElementById("D").value) || 0;
+  const E = Number(document.getElementById("E").value) || 0;
+
+  const R = (50*A + 500*B + 2000*C + 10000*D) / 1249185;
+  const R2 = round1(R);
+
+  const K = E / 55000000;
+  const K2 = round1(K);
+
+  const Z = K === 0 ? Infinity : R / K;
+
+  let message = "";
+  if (R > 4 && Z > 2) {
+    message = "十分にレポートがあり、レポートに対してクレジットが不足がちです。クレジットを回りましょう！";
+  } else if (R <= 4) {
+    message = "レポートが不足しているようです。レポートを回りましょう！";
+  } else if (R > 4 && Z <= 2) {
+    message = "レポートは十分にありそうですが、クレジットも相応にあります。クレジット回るよりレポート回る方がバランスが良くなります。";
+  }
+
+  document.getElementById("result").innerHTML =
+    "<div class='main-message'>" + message + "</div>" +
+    "<div>レポートは " + R2 + " 名分、クレジットはおよそ " + K2 + " 名を実戦レベルに育成する量があります</div>";
+}
+</script>
+
+</body>
+</html>
