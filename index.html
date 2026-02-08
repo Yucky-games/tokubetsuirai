@@ -135,14 +135,13 @@ details {
       <div class="label-wrap">
         <span>クレジット</span>
       </div>
-      <input type="number" id="E" value="0">
+      <input type="text" id="E" value="0">
     </div>
   </div>
 
   <div class="button-area">
     <button onclick="calculate()">計算する</button>
   </div>
-  
   <div id="result"></div>
 
   <details>
@@ -164,12 +163,22 @@ function round1(x) {
   return Math.round(x * 10) / 10;
 }
 
+function formatComma(value) {
+  return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const creditInput = document.getElementById("E");
+creditInput.addEventListener("input", () => {
+  let raw = creditInput.value.replace(/,/g, "").replace(/[^0-9]/g, "");
+  creditInput.value = formatComma(raw);
+});
+
 function calculate() {
   const A = Number(document.getElementById("A").value) || 0;
   const B = Number(document.getElementById("B").value) || 0;
   const C = Number(document.getElementById("C").value) || 0;
   const D = Number(document.getElementById("D").value) || 0;
-  const E = Number(document.getElementById("E").value) || 0;
+  const E = Number(document.getElementById("E").value.replace(/,/g, "")) || 0;
 
   const R = (50*A + 500*B + 2000*C + 10000*D) / 1249185;
   const R2 = round1(R);
