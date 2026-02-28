@@ -59,6 +59,20 @@ header {
   text-align: center;
   margin-bottom: 16px;
 }
+.toggle-area {
+  text-align: center;
+  margin: -4px 0 16px;
+}
+.toggle-area label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+#enhance-group {
+  display: none;
+}
 button {
   display: inline-block;
   padding: 10px 18px;
@@ -134,9 +148,49 @@ details {
     <div class="item">
       <div class="label-wrap">
         <span>クレジット</span>
-        	<img src="https://assets.st-note.com/img/1770527129-6WKi03AIafgL4DQwreFVoqbZ.png">
+	<img src="https://assets.st-note.com/img/1770526764-I09MOsL5rdlm4XxyvcA2Ghtn.png">
       </div>
       <input type="text" id="E" value="0">
+    </div>
+  </div>
+
+  <div class="toggle-area">
+    <label for="enhanceToggle">
+      <input type="checkbox" id="enhanceToggle">
+      <span>強化球も計算してみる</span>
+    </label>
+  </div>
+
+  <div class="group" id="enhance-group">
+    <div class="grid">
+      <div class="item">
+        <div class="label-wrap">
+          <span>初級強化球</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3312E706E67.png">
+        </div>
+        <input type="number" id="L" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>中級強化球</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3322E706E67.png">
+        </div>
+        <input type="number" id="M" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>上級強化珠</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3332E706E67.png">
+        </div>
+        <input type="number" id="N" value="0">
+      </div>
+      <div class="item">
+        <div class="label-wrap">
+          <span>最上級強化珠</span>
+          <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3342E706E67.png">
+        </div>
+        <input type="number" id="P" value="0">
+      </div>
     </div>
   </div>
 
@@ -153,7 +207,7 @@ details {
     にするために必要なクレジットを元にしています。
     星上げに必要なクレジットは考慮してないですが、スキルや装備を全てフルマックスにするケースが少ないと思うので、
     全く的はずれな値ではないと思います。基本的にはレポート確保優先で、育成可能人数が４名いなければレポート優先判断。
-    ４名育成可能でかつ、レポートで育成できる人数がクレジットで育成できる人数より４名以上多い場合クレジット優先判断をするようにしています。
+    ４名育成可能でかつ、レポートで育成できる人数がクレジットで育成できる人数より４名以上多い場合クレジット優先判断をするようにしています。強化珠が20人分以上あり、かつクレジットが10名分未満のときはショップ購入を控えるメッセージが出ます。
     </p>
   </details>
 
@@ -173,6 +227,11 @@ creditInput.addEventListener("input", () => {
   let raw = creditInput.value.replace(/,/g, "").replace(/[^0-9]/g, "");
   creditInput.value = formatComma(raw);
 });
+const enhanceToggle = document.getElementById("enhanceToggle");
+const enhanceGroup = document.getElementById("enhance-group");
+enhanceToggle.addEventListener("change", () => {
+  enhanceGroup.style.display = enhanceToggle.checked ? "block" : "none";
+});
 
 function calculate() {
   const A = Number(document.getElementById("A").value) || 0;
@@ -180,6 +239,10 @@ function calculate() {
   const C = Number(document.getElementById("C").value) || 0;
   const D = Number(document.getElementById("D").value) || 0;
   const E = Number(document.getElementById("E").value.replace(/,/g, "")) || 0;
+  const L = Number(document.getElementById("L").value) || 0;
+  const M = Number(document.getElementById("M").value) || 0;
+  const N = Number(document.getElementById("N").value) || 0;
+  const P = Number(document.getElementById("P").value) || 0;
 
   const R = (50*A + 500*B + 2000*C + 10000*D) / 1249185;
   const R2 = round1(R);
@@ -198,9 +261,24 @@ function calculate() {
     message = "レポートは十分にありそうですが、クレジットも相応にあります。クレジット回るよりレポート回る方がバランスが良くなります。";
   }
 
+  let enhancementMessage = "";
+  if (enhanceToggle.checked) {
+    const S = (90*L + 360*M + 1440*N + 5760*P) / 246680;
+    const S2 = round1(S);
+    const T = S2 / 3;
+    const T2 = round1(T);
+    enhancementMessage =
+      "<div>強化珠はおよそ " + S2 + " 装備分（" + T2 + " 人分）をT1からT10まで強化できる量があります。</div>";
+    if (T2 >= 20 && K2 < 10) {
+      enhancementMessage +=
+        "<div>強化玉の量に対してクレジットがとても少ないようです。毎日ショップで購入している場合は購入を控えましょう。</div>";
+    }
+  }
+
   document.getElementById("result").innerHTML =
     "<div class='main-message'>" + message + "</div>" +
-    "<div>レポートは " + R2 + " 名分、クレジットはおよそ " + K2 + " 名を実戦レベルに育成する量があります。</div>";
+    "<div>レポートは " + R2 + " 名分、クレジットはおよそ " + K2 + " 名を実戦レベルに育成する量があります。</div>" +
+    enhancementMessage;
 }
 </script>
 
