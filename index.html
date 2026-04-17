@@ -118,28 +118,28 @@ details {
           <span>初級レポート</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E5889DE7B49AE383ACE3839DE383BCE383882E706E67.png">
         </div>
-        <input type="number" id="A" value="0">
+        <input type="number" id="A" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>中級レポート</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E4B8ADE7B49AE383ACE3839DE383BCE383882E706E67.png">
         </div>
-        <input type="number" id="B" value="0">
+        <input type="number" id="B" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>上級レポート</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E4B88AE7B49AE383ACE3839DE383BCE383882E706E67.png">
         </div>
-        <input type="number" id="C" value="0">
+        <input type="number" id="C" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>最上級レポート</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E69C80E4B88AE7B49AE383ACE3839DE383BCE383882E706E67.png">
         </div>
-        <input type="number" id="D" value="0">
+        <input type="number" id="D" placeholder="0">
       </div>
     </div>
   </div>
@@ -150,7 +150,7 @@ details {
         <span>クレジット</span>
 	<img src="https://assets.st-note.com/img/1770526764-I09MOsL5rdlm4XxyvcA2Ghtn.png">
       </div>
-      <input type="text" id="E" value="0">
+      <input type="text" id="E" placeholder="0" inputmode="numeric">
     </div>
   </div>
 
@@ -168,28 +168,28 @@ details {
           <span>初級強化珠</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3312E706E67.png">
         </div>
-        <input type="number" id="L" value="0">
+        <input type="number" id="L" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>中級強化珠</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3322E706E67.png">
         </div>
-        <input type="number" id="M" value="0">
+        <input type="number" id="M" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>上級強化珠</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3332E706E67.png">
         </div>
-        <input type="number" id="N" value="0">
+        <input type="number" id="N" placeholder="0">
       </div>
       <div class="item">
         <div class="label-wrap">
           <span>最上級強化珠</span>
           <img src="https://bluearchive.wikiru.jp/attach2/696D67_E8A385E58299E382A2E382A4E382B3E383B3342E706E67.png">
         </div>
-        <input type="number" id="P" value="0">
+        <input type="number" id="P" placeholder="0">
       </div>
     </div>
   </div>
@@ -218,14 +218,30 @@ function round1(x) {
   return Math.round(x * 10) / 10;
 }
 
+function normalizeDigits(value) {
+  return value
+    .replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xFEE0))
+    .replace(/[^0-9]/g, "");
+}
+
+function trimLeadingZeros(value) {
+  return value.replace(/^0+(?=\d)/, "");
+}
+
 function formatComma(value) {
   return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const creditInput = document.getElementById("E");
+creditInput.addEventListener("focus", () => {
+  creditInput.value = normalizeDigits(creditInput.value);
+});
 creditInput.addEventListener("input", () => {
-  let raw = creditInput.value.replace(/,/g, "").replace(/[^0-9]/g, "");
-  creditInput.value = formatComma(raw);
+  creditInput.value = normalizeDigits(creditInput.value);
+});
+creditInput.addEventListener("blur", () => {
+  const raw = trimLeadingZeros(normalizeDigits(creditInput.value));
+  creditInput.value = raw ? formatComma(raw) : "";
 });
 const enhanceToggle = document.getElementById("enhanceToggle");
 const enhanceGroup = document.getElementById("enhance-group");
@@ -238,7 +254,7 @@ function calculate() {
   const B = Number(document.getElementById("B").value) || 0;
   const C = Number(document.getElementById("C").value) || 0;
   const D = Number(document.getElementById("D").value) || 0;
-  const E = Number(document.getElementById("E").value.replace(/,/g, "")) || 0;
+  const E = Number(normalizeDigits(document.getElementById("E").value)) || 0;
   const L = Number(document.getElementById("L").value) || 0;
   const M = Number(document.getElementById("M").value) || 0;
   const N = Number(document.getElementById("N").value) || 0;
