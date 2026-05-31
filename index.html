@@ -13,6 +13,13 @@ gtag('js', new Date());
 
 gtag('config', 'G-WNVG2LRB3H');
 </script>
+<script>
+window.PendakoAnalytics = {
+  appId: "ba_kimeru_kun",
+  version: "0.1.0"
+};
+</script>
+<script defer src="https://analytics.pendako.workers.dev/pendako.js"></script>
 <meta name="description" content="ブルーアーカイブの特別依頼で、レポート・クレジット・強化珠の所持量から育成可能人数や装備強化量を自動計算できる無料ツール。周回優先度の判断や育成計画の目安づくりに役立ちます。">
 <meta name="keywords" content="ブルーアーカイブ,ブルアカ,特別依頼,特別依頼キメルくん,レポート 計算,クレジット 計算,強化珠 計算,育成 計画,周回 優先度,装備強化">
 <meta name="author" content="ゆっきー">
@@ -180,7 +187,7 @@ details {
 
   <div class="toggle-area">
     <label for="enhanceToggle">
-      <input type="checkbox" id="enhanceToggle">
+      <input type="checkbox" id="enhanceToggle" data-pa-event="enhance_toggle">
       <span>強化珠も計算してみる</span>
     </label>
   </div>
@@ -219,7 +226,7 @@ details {
   </div>
 
   <div class="button-area">
-    <button onclick="calculate()">計算する</button>
+    <button onclick="calculate()" data-pa-event="calculate_click">計算する</button>
   </div>
   <div id="result"></div>
 
